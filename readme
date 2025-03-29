@@ -1,0 +1,43 @@
+/live-comments
+│── /services/comment_publisher
+│       ├── docker-compose.yml
+│       ├── Dockerfile
+│       ├── .env
+│── /services/comment_streaming
+│       ├── docker-compose.yml
+│       ├── Dockerfile
+│       ├── .env
+│── /redis
+│    ├── docker-compose.yml
+│── /load_balancer-comment_publisher
+│    ├── docker-compose.yml
+│    ├── nginx.conf
+│── /load_balancer-comment_streaming
+│    ├── docker-compose.yml
+│    ├── nginx.conf
+|── /kong
+    |── kong.yml    
+    |── docker-compose.yml
+
+
+
+>Network
+    docker network create live_comments_network
+>Redis	
+    cd redis
+    docker-compose up -d
+>Publisher Service	
+    cd ../services/comment_publisher
+    docker-compose up --scale commnent_publisher=3 -d
+>Streaming Service	
+    cd ../comment_streaming
+    docker-compose up --scale comment_streaming=3 -d
+>Publisher LB	
+    cd load_balancer-comment_streaming
+    docker-compose up -d
+>Streaming LB
+	cd load_balancer-comment_streaming
+    docker-compose up -d
+>Kong API Gateway
+    docker-compose up -d
+    

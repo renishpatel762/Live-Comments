@@ -1,0 +1,18 @@
+_format_version: "3.0"
+
+services:
+  - name: comment_streaming
+  # port is 80(nginx internal port) not 8081(exposed)
+    url: http://lb-comment_streaming:80
+    # Ensure port matches LB's exposed port
+    routes:
+      - name: streaming_route
+        paths:
+          - /streaming
+
+  - name: comment_publisher
+    url: http://lb-comment_publisher:80
+    routes:
+      - name: publish_route
+        paths:
+          - /publish

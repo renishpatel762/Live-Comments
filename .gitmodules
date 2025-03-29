@@ -1,0 +1,6 @@
+[submodule "services/comment_streaming"]
+	path = services/comment_streaming
+	url = https://github.com/renishpatel762/comment_streaming.git
+[submodule "services/comment_publisher"]
+	path = services/comment_publisher
+	url = https://github.com/renishpatel762/comment_publisher.git
