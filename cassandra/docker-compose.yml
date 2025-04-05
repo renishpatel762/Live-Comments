@@ -1,0 +1,20 @@
+services:
+  cassandra:
+    image: cassandra:4.1
+    # ports:
+    #   - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=LiveCommentsCluster
+      - CASSANDRA_DC=datacenter_live_comments
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    networks:
+      - live_comments_network  # Attach Kong to the existing network
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+
+volumes:
+  cassandra_data:
+
+networks:
+  live_comments_network:
+    external: true # Ensure Kong joins the existing network

@@ -1,9 +1,9 @@
 /live-comments
-│── /services/comment_publisher
+│── /services/comment_publisher (git submodule)
 │       ├── docker-compose.yml
 │       ├── Dockerfile
 │       ├── .env
-│── /services/comment_streaming
+│── /services/comment_streaming (git submodule)
 │       ├── docker-compose.yml
 │       ├── Dockerfile
 │       ├── .env
@@ -16,9 +16,13 @@
 │    ├── docker-compose.yml
 │    ├── nginx.conf
 |── /kong
-    |── kong.yml    
-    |── docker-compose.yml
+     |── kong.yml    
+     |── docker-compose.yml
+|── /cassandra
+     |── docker-compose.yml
 
+
+#  submodules are referenced by a specific commit, not a branch.
 
 
 >Network
