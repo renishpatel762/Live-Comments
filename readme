@@ -30,9 +30,12 @@
 >Redis	
     cd redis
     docker-compose up -d
+>Casssandra
+    cd cassandra
+    docker-compose up -d
 >Publisher Service	
     cd ../services/comment_publisher
-    docker-compose up --scale commnent_publisher=3 -d
+    docker-compose up --scale comment_publisher=3 -d
 >Streaming Service	
     cd ../comment_streaming
     docker-compose up --scale comment_streaming=3 -d

@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 4s
+
+scrape_configs:
+  # Prometheus self‑monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ["192.168.13.239:4000"]

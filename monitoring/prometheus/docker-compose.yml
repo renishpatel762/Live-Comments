@@ -1,0 +1,8 @@
+services:
+  prom-server:
+    image: prom/prometheus:latest
+    volumes:
+      # Mount your prometheus.yml into the container
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"

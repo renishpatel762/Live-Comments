@@ -1,0 +1,10 @@
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3030:3000" 
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  grafana_data:
