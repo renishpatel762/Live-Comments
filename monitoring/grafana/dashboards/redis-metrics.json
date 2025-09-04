@@ -1,0 +1,120 @@
+{
+  "id": null,
+  "title": "Redis Metrics Dashboard",
+  "tags": ["redis", "live-comments"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Redis Operations Rate",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(redis_operations_total[1m])) by (operation, status)",
+          "legendFormat": "{{operation}} - {{status}}",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Operations/sec",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "title": "Redis Connection Count",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "redis_connections_active",
+          "legendFormat": "Active Connections",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 }
+    },
+    {
+      "id": 3,
+      "title": "Redis Operation Duration",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(redis_operation_duration_seconds_bucket[5m])) by (le, operation))",
+          "legendFormat": "95th percentile - {{operation}}",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(redis_operation_duration_seconds_bucket[5m])) by (le, operation))",
+          "legendFormat": "50th percentile - {{operation}}",
+          "refId": "B"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Duration (seconds)",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 8 }
+    },
+    {
+      "id": 4,
+      "title": "Comments Published Rate",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(comments_published_total[1m])) by (video_id)",
+          "legendFormat": "Video {{video_id}}",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Comments/sec",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 }
+    },
+    {
+      "id": 5,
+      "title": "SSE Messages Streamed",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(sse_messages_streamed_total[1m])) by (video_id)",
+          "legendFormat": "Video {{video_id}}",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Messages/sec",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 }
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "5s",
+  "schemaVersion": 30,
+  "version": 1
+}

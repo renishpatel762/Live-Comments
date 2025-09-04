@@ -1,8 +1,69 @@
+# global:
+#   scrape_interval: 4s
+
+# scrape_configs:
+#   # Prometheus self‑monitoring
+#   - job_name: 'prometheus'
+#     static_configs:
+#       - targets: ["192.168.163.239:4000"]
+
+# monitoring/prometheus/prometheus.yml
 global:
-  scrape_interval: 4s
+  scrape_interval: 5s
+
+# rule_files:
+#   - "rules/*.yml"
+
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           # Add alertmanager if needed
+#           # - alertmanager:9093
 
 scrape_configs:
-  # Prometheus self‑monitoring
-  - job_name: 'prometheus'
+  # Prometheus itself
+  - job_name: "prometheus"
     static_configs:
-      - targets: ["192.168.13.239:4000"]
+    # TODO: can we use service name here instead of port
+      - targets: ["localhost:9090"]
+  
+  - job_name: "comment_publisher"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["lb-comment_publisher:80"]
+
+  - job_name: "comment_streaming"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["lb-comment_streaming:80"]
+
+  # Nginx Load Balancers
+  - job_name: 'nginx-publisher'
+    static_configs:
+      - targets: ['lb-comment_publisher:9113']
+    scrape_interval: 15s
+
+  - job_name: 'nginx-streaming'
+    static_configs:
+      - targets: ['lb-comment_streaming:9113']
+    scrape_interval: 15s
+
+  # Kong API Gateway
+  - job_name: 'kong'
+    static_configs:
+      - targets: ['kong:8001']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  # Node Exporter (System metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+
+  # cAdvisor (Container metrics)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 15s

@@ -9,6 +9,10 @@ services:
       - "80"  # Exposing only inside Docker network
     networks:
       - live_comments_network
+    labels:
+      - "logging=promtail"
+      - "service=comment_streaming"
+
 
 networks:
   live_comments_network:

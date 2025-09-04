@@ -1,6 +1,14 @@
 services:
+  kong-redis:
+    image: redis:7-alpine
+    networks:
+      - live_comments_network  # Attach Kong to the existing network
+
   kong:
     image: kong/kong-gateway:latest
+    depends_on:
+      - kong-redis
+
     container_name: kong
     restart: always
     environment:

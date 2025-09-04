@@ -1,3 +1,10 @@
+# echo "Access URLs:"
+# echo "- Grafana: http://localhost:3000 (admin/admin123)"
+# echo "- Prometheus: http://localhost:9090"
+# echo "- Loki: http://localhost:3100"
+# echo "- cAdvisor: http://localhost:8080"
+
+
 /live-comments
 │── /services/comment_publisher (git submodule)
 │       ├── docker-compose.yml

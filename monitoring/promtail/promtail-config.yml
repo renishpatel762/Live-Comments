@@ -1,0 +1,159 @@
+# monitoring/promtail/promtail-config.yml
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Docker container logs
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: label
+            values: ["logging=promtail"]
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)' 
+        target_label: 'container_name'
+        replacement: '${1}'
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'service_name'
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_project']
+        target_label: 'project'
+      - source_labels: ['__meta_docker_container_label_environment']
+        target_label: 'environment'
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            message: message
+            timestamp: timestamp
+            service: service
+      - labels:
+          level:
+          service:
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+
+  # Comment Publisher Service logs
+  - job_name: comment_publisher
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: comment_publisher
+          service: comment_publisher
+          __path__: /var/lib/docker/containers/*/*.log
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'comment_publisher.*'
+        action: keep
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            message: message
+            videoId: videoId
+            author: author
+            processing_time: processingTime
+      - labels:
+          level:
+          service:
+          video_id: videoId
+
+  # Comment Streaming Service logs  
+  - job_name: comment_streaming
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: comment_streaming
+          service: comment_streaming
+          __path__: /var/lib/docker/containers/*/*.log
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'comment_streaming.*'
+        action: keep
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            message: message
+            videoId: videoId
+            event: event
+            active_connections: activeConnections
+      - labels:
+          level:
+          service:
+          video_id: videoId
+
+  # Nginx logs
+  - job_name: nginx
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx
+          service: nginx
+          __path__: /var/lib/docker/containers/*/*.log
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'nginx.*'
+        action: keep
+    pipeline_stages:
+      - regex:
+          expression: '(?P<remote_addr>\S+) - (?P<remote_user>\S+) \[(?P<time_local>[^\]]+)\] "(?P<method>\S+) (?P<request_uri>\S+) (?P<server_protocol>\S+)" (?P<status>\d+) (?P<body_bytes_sent>\d+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"'
+      - labels:
+          method:
+          status:
+          remote_addr:
+
+  # Kong logs
+  - job_name: kong
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: kong
+          service: kong
+          __path__: /var/lib/docker/containers/*/*.log
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'kong.*'
+        action: keep
+
+  # Redis logs
+  - job_name: redis
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: redis
+          service: redis
+          __path__: /var/lib/docker/containers/*/*.log
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'redis.*'
+        action: keep
+
+  # Cassandra logs
+  - job_name: cassandra
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: cassandra
+          service: cassandra
+          __path__: /var/lib/docker/containers/*/*.log
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'cassandra.*'
+        action: keep

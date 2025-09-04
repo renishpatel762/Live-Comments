@@ -4,7 +4,22 @@ services:
     ports:
       - "3030:3000" 
     volumes:
+      # Data persistence
       - grafana_data:/var/lib/grafana
+      # Provisioning files (datasources, dashboards config)
+      - ./provisioning:/etc/grafana/provisioning:ro
+      # Dashboard JSON files
+      - ./dashboards:/var/lib/grafana/dashboards:ro
+      # Custom grafana.ini if needed
+      # - ./grafana.ini:/etc/grafana/grafana.ini:ro
+    networks:
+      - live_comments_network
+    labels:
+      - "logging=promtail"
 
 volumes:
   grafana_data:
+
+networks:
+  live_comments_network:
+    external: true   # reuse the same network as your services

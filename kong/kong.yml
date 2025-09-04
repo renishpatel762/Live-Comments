@@ -9,6 +9,17 @@ services:
       - name: streaming_route
         paths:
           - /streaming
+        plugins:
+          - name: rate-limiting
+            config:
+              policy: redis
+              redis_host: kong-redis
+              redis_port: 6379
+              limit_by: ip
+              minute: 100
+              fault_tolerant: true
+              hide_client_headers: false
+
 
   - name: comment_publisher
     url: http://lb-comment_publisher:80
@@ -16,3 +27,13 @@ services:
       - name: publish_route
         paths:
           - /publish
+        plugins:
+          - name: rate-limiting
+            config:
+              policy: redis
+              redis_host: kong-redis
+              redis_port: 6379
+              limit_by: ip
+              minute: 100
+              fault_tolerant: true
+              hide_client_headers: false

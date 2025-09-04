@@ -1,0 +1,283 @@
+{
+  "id": null,
+  "title": "Infrastructure Metrics Dashboard",
+  "tags": ["infrastructure", "docker", "system"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "System CPU Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU Usage %",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Percentage",
+          "min": 0,
+          "max": 100
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    },
+    {
+      "id": 2,
+      "title": "System Memory Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "Memory Usage %",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Percentage",
+          "min": 0,
+          "max": 100
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }
+    },
+    {
+      "id": 3,
+      "title": "Container CPU Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[1m])) by (name) * 100",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "CPU %",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+    },
+    {
+      "id": 4,
+      "title": "Container Memory Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(container_memory_usage_bytes{name!=\"\"}) by (name) / 1024 / 1024 / 1024",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Memory (GB)",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+    },
+    {
+      "id": 5,
+      "title": "Network I/O",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(container_network_receive_bytes_total{name!=\"\"}[1m])) by (name) / 1024 / 1024",
+          "legendFormat": "RX {{name}} (MB/s)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(container_network_transmit_bytes_total{name!=\"\"}[1m])) by (name) / 1024 / 1024",
+          "legendFormat": "TX {{name}} (MB/s)",
+          "refId": "B"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "MB/s",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 }
+    },
+    {
+      "id": 6,
+      "title": "Disk I/O",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(container_fs_reads_bytes_total{name!=\"\"}[1m])) by (name) / 1024 / 1024",
+          "legendFormat": "Read {{name}} (MB/s)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(container_fs_writes_bytes_total{name!=\"\"}[1m])) by (name) / 1024 / 1024",
+          "legendFormat": "Write {{name}} (MB/s)",
+          "refId": "B"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "MB/s",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 }
+    },
+    {
+      "id": 7,
+      "title": "Container Status",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "container_last_seen{name!=\"\"}",
+          "legendFormat": "{{name}}",
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 24 }
+    },
+    {
+      "id": 8,
+      "title": "Nginx Load Balancer Stats",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "nginx_http_requests_total",
+          "legendFormat": "Total Requests",
+          "refId": "A"
+        },
+        {
+          "expr": "nginx_connections_active",
+          "legendFormat": "Active Connections",
+          "refId": "B"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 24 }
+    },
+    {
+      "id": 9,
+      "title": "Kong API Gateway Metrics",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(kong_http_status[1m])) by (code)",
+          "legendFormat": "HTTP {{code}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 24 }
+    },
+    {
+      "id": 10,
+      "title": "Redis Key Statistics",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "redis_db_keys",
+          "legendFormat": "Total Keys DB{{db}}",
+          "refId": "A"
+        },
+        {
+          "expr": "redis_db_avg_ttl_seconds",
+          "legendFormat": "Avg TTL DB{{db}}",
+          "refId": "B"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 }
+    },
+    {
+      "id": 11,
+      "title": "Redis Memory Usage",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "redis_memory_used_bytes / 1024 / 1024",
+          "legendFormat": "Used Memory (MB)",
+          "refId": "A"
+        },
+        {
+          "expr": "redis_memory_max_bytes / 1024 / 1024",
+          "legendFormat": "Max Memory (MB)",
+          "refId": "B"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Memory (MB)",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 }
+    },
+    {
+      "id": 12,
+      "title": "Disk Usage by Container",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(container_fs_usage_bytes{name!=\"\"}) by (name) / 1024 / 1024 / 1024",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "yAxes": [
+        {
+          "label": "Disk Usage (GB)",
+          "min": 0
+        }
+      ],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 40 }
+    },
+    {
+      "id": 13,
+      "title": "System Load Average",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "node_load1",
+          "legendFormat": "1m load avg",
+          "refId": "A"
+        },
+        {
+          "expr": "node_load5",
+          "legendFormat": "5m load avg",
+          "refId": "B"
+        },
+        {
+          "expr": "node_load15",
+          "legendFormat": "15m load avg",
+          "refId": "C"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 48 }
+    },
+    {
+      "id": 14,
+      "title": "Network Connections",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "node_netstat_Tcp_CurrEstab",
+          "legendFormat": "Established TCP Connections",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 48 }
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "30s",
+  "schemaVersion": 30,
+  "version": 1
+}

@@ -3,4 +3,16 @@ services:
     image: grafana/loki
     ports:
       - "3100:3100"
-    
+    networks:
+      - live_comments_network
+    volumes:
+      - loki_data:/loki
+    labels:
+      - "logging=promtail"
+
+networks:
+  live_comments_network:
+    external: true   # reuse the same network as your services
+
+volumes:
+  loki_data: {}
